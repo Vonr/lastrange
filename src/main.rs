@@ -6,14 +6,13 @@ fn main() {
         s += &(arg + " ");
     }
     println!("{}", lagrange_string_interp(&s));
-    println!();
 }
 
 fn lagrange_string_interp(s: &str) -> String {
     let xs: Vec<f64> = (0..s.len()).map(|i| i as f64).collect();
     let ys = s.chars().map(|c| c as u8 as f64).collect::<Vec<f64>>();
 
-    let mut result = String::new();
+    let mut result = String::from("(");
 
     for (i, x) in xs.iter().enumerate() {
         let mut y = ys[i];
@@ -32,38 +31,25 @@ fn lagrange_string_interp(s: &str) -> String {
             if xj == &0.0 {
                 numerator += &format!("x*");
             } else {
-                numerator += &format!("(x-{}.0)*", xj);
+                numerator += &format!("(x-{:.}.0)*", xj);
             }
             denominator *= x - xj;
-
-            let gcd = gcd(denominator, y);
-            y /= gcd;
-            denominator /= gcd;
         }
+        y /= denominator;
 
         numerator.pop();
 
-        if denominator == 1.0 {
-            if y == 1.0 {
-                result += &numerator;
-            } else {
-                result += &format!("{}.0*{}", y, numerator);
-            }
+        if y == 1.0 {
+            result += &numerator;
         } else {
-            if y == 1.0 {
-                result += &format!("{}/{}.0", numerator, denominator);
+            if y.fract() == 0.0 {
+                result += &format!("{:.}.0*{:.}", y, numerator);
             } else {
-                result += &format!("{}.0*{}/{}.0", y, numerator, denominator);
+                result += &format!("{:.}*{:.}", y, numerator);
             }
         }
     }
 
+    result.push_str(").round() as u8 as char");
     result.replace("+-", "-")
-}
-
-fn gcd(mut a: f64, mut b: f64) -> f64 {
-    while b != 0.0 {
-        (a, b) = (b, a % b);
-    }
-    a
 }
