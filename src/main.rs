@@ -30,7 +30,7 @@ fn lagrange_string_interp(s: &str) -> String {
             .for_each(|(_, xj)| {
                 match *xj == 0 {
                     true => numerator += "x*",
-                    false => numerator += &format!("(x-{:.}.0)*", xj),
+                    false => numerator += &format!("(x-{}.0)*", xj),
                 };
                 denominator *= x - xj
             });
@@ -41,9 +41,9 @@ fn lagrange_string_interp(s: &str) -> String {
         match y == one {
             true => result += &numerator,
             false if y.rem_trunc_ref().complete().cmp0() == Ordering::Equal => {
-                result += &format!("{:.}.0*{:.}", y.to_f64(), numerator)
+                result += &format!("{}.0*{}", y.to_f64(), numerator)
             }
-            _ => result += &format!("{:.}*{:.}", y.to_f64(), numerator),
+            _ => result += &format!("{}*{}", y.to_f64(), numerator),
         }
         numerator.clear()
     }
